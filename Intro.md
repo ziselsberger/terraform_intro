@@ -20,9 +20,8 @@ resource "azurerm_resource_group" "rg_tfws" {
 }
 ```
 
-> Run terraform validate.  
-> Commit & push changes.  
-> Run terraform plan & apply
+> Validate, commit & push your changes.  
+> Run terraform plan & apply.
 
 ### Storage account - Datalake
 
@@ -43,9 +42,8 @@ resource "azurerm_storage_account" "st_datalake" {
   - What is the internal naming convention for storage accounts?
   - Do we need to define `public_network_acccess_enabled`? (try terraform plan & apply)
 
-> Run terraform validate.  
-> Commit & push changes.  
-> Run terraform plan & apply
+> Validate, commit & push your changes.  
+> Run terraform plan & apply.
 
 ### Private endpoint
 
@@ -71,9 +69,8 @@ resource "azurerm_private_endpoint" "pe_datalake" {
 - What is the `private_connection_resource_id` and how do we get it?
 - Which `subresource_names` do we need to define for our datalake?
 
-> Run terraform validate.  
-> Commit & push changes.  
-> Run terraform plan & apply
+> Validate, commit & push your changes.  
+> Run terraform plan & apply.
 
 ### Role assignment
 
@@ -87,9 +84,8 @@ resource "azurerm_role_assignment" "st_sbdr" {
 
 - Where/How do you find the `principal_id` of a user / group / service principal?
 
-> Run terraform validate.  
-> Commit & push changes.  
-> Run terraform plan & apply
+> Validate, commit & push your changes.  
+> Run terraform plan & apply.
 
 ### Use variables
 
@@ -97,8 +93,7 @@ resource "azurerm_role_assignment" "st_sbdr" {
 - Create terraform.tfvars file and add `location = "West Europe"`.
 - Replace all occurrences of the hard coded "West Europe" with the new variable.
 
-> Run terraform validate.  
-> Commit & push changes.  
+> Validate, commit & push your changes. 
 > Run terraform plan (_there should not be any changes_).
 
 ### Conditionals & Loops
@@ -128,9 +123,8 @@ resource "azurerm_role_assignment" "st_sbdr" {
 
 - Delete the code for the _second_ resource.
 
-> Run terraform validate.  
-> Commit & push changes.  
-> Run terraform plan -> What will be changed?
+> Validate, commit & push your changes.  
+> Run terraform plan -> What will be changed?  
 > Run terraform apply.
 
 ## Create & use modules
@@ -165,9 +159,8 @@ resource "azurerm_role_assignment" "st_sbdr" {
   }
   ```
 
-> Run terraform validate.  
-> Commit & push changes.  
-> Run terraform plan -> What will be changed?
+> Validate, commit & push your changes.  
+> Run terraform plan -> What will be changed?  
 > Run terraform apply.
 
 ### Dependencies between resources
