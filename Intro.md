@@ -11,6 +11,14 @@
 
 - Resource group
 
+```terraform
+resource "azurerm_resource_group" "rg_tf_ws" {
+  location = "West Europe"
+  name     = "rg-tf-workshop"
+}
+```
+
+
 - Storage account
 
 - Role assignment
