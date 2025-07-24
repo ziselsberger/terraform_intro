@@ -1,5 +1,7 @@
 # Intro IaC for Azure
 
+https://spacelift.io/blog/terraform-resources
+
 # Hands-on
 
 ### Setup
@@ -17,6 +19,10 @@ resource "azurerm_resource_group" "rg_tfws" {
   name     = "rg-tf-workshop"
 }
 ```
+
+> Run terraform validate.  
+> Commit & push changes.  
+> Run terraform plan & apply
 
 ### Storage account - Datalake
 
@@ -37,6 +43,9 @@ resource "azurerm_storage_account" "st_datalake" {
   - What is the internal naming convention for storage accounts?
   - Do we need to define `public_network_acccess_enabled`? (try terraform plan & apply)
 
+> Run terraform validate.  
+> Commit & push changes.  
+> Run terraform plan & apply
 
 ### Private endpoint
 
@@ -62,6 +71,9 @@ resource "azurerm_private_endpoint" "pe_datalake" {
 - What is the `private_connection_resource_id` and how do we get it?
 - Which `subresource_names` do we need to define for our datalake?
 
+> Run terraform validate.  
+> Commit & push changes.  
+> Run terraform plan & apply
 
 ### Role assignment
 
@@ -75,18 +87,104 @@ resource "azurerm_role_assignment" "st_sbdr" {
 
 - Where/How do you find the `principal_id` of a user / group / service principal?
 
-## Use variables
+> Run terraform validate.  
+> Commit & push changes.  
+> Run terraform plan & apply
 
-## Update resources
+### Use variables
+
+- Define a variable for **location** in variables.tf (type = string).
+- Create terraform.tfvars file and add `location = "West Europe"`.
+- Replace all occurrences of the hard coded "West Europe" with the new variable.
+
+> Run terraform validate.  
+> Commit & push changes.  
+> Run terraform plan (_there should not be any changes_).
+
+### Conditionals & Loops
+
+- Create a local variable **datalake-private-endpoints** and assign the necessary subresource names (as list).
+
+  ```terraform
+  locals {
+    datalake-private-endpoints = ...
+  }
+  ```
+
+- Update the _first_ private endpoint resource:
+
+  ```terraform
+  resource "azurerm_private_endpoint" "pe_datalake" {
+    for_each = toset(local.datalake-private-endpoints)
+
+    ...
+
+    private_service_connection {
+      subresource_names = [each.value]
+      ...
+    }
+  }
+  ```
+
+- Delete the code for the _second_ resource.
+
+> Run terraform validate.  
+> Commit & push changes.  
+> Run terraform plan -> What will be changed?
+> Run terraform apply.
 
 ## Create & use modules
 
-## Conditionals & Loops
+- Create a module named "datalake"
+
+  Terminal: 
+  ```
+  mkdir -p modules/datalake
+  ```
+  ```
+  cd modules/datalake
+  ```
+  ```
+  touch main.tf variables.tf output.tf
+  ```
+
+- Move the following resource definitions to the main.tf file of the module:
+  - Storage account
+  - Private Endpoint
+  - Role assignment
+- Create the necessary variable definitions in variables.tf.
+- Update the resource definitions with the new variables.
+- Add the following block to your main.tf file and add the variables.
+
+  ```terraform
+  module "test_datalake" {
+  source = "modules/datalake"
+
+  ...
+
+  }
+  ```
+
+> Run terraform validate.  
+> Commit & push changes.  
+> Run terraform plan -> What will be changed?
+> Run terraform apply.
+
+### Dependencies between resources
+
+- In which order are the resources created? 
+- Are there any dependencies?
+- If so, how can we make sure the resources are created in the correct order?
+
 
 ## Import existing resources
 
-- Storage account
+- Resource Group
 
 - Role assignment
 
-## Destroy resources
+## Update TF files, if something was changed manually.
+
+## Rename resources in state file (terrafrom state mv)
+
+## Remove resources from state file (terraform state rm)
