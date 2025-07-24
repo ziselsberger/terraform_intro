@@ -1,4 +1,4 @@
-# Intro IaC
+# Intro IaC for Azure
 
 # Hands-on
 
@@ -9,7 +9,7 @@
 
 ## Add resource blocks
 
-- Resource group
+### Resource group
 
 ```terraform
 resource "azurerm_resource_group" "rg_tfws" {
@@ -18,23 +18,41 @@ resource "azurerm_resource_group" "rg_tfws" {
 }
 ```
 
-- Storage account
+### Storage account
+
+[Doku: azurerm/storage_account](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account)
+
 
 ```terraform
 resource "azurerm_storage_account" "st_tfws" {
-  name                     = "stbtvdutfwsdev001"
-  resource_group_name      = "rg-tf-workshop"
-  location                 = "West Europe"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    created_by = "Miri"
-  }
+  name                           = "stbtvdutfwsdev001"
+  resource_group_name            = "rg-tf-workshop"
+  location                       = "West Europe"
+  account_tier                   = "Standard"
+  account_replication_type       = "LRS"
 }
 ```
 
-- Role assignment
+  - What is the default value for `account_kind`?
+  - Do we need to define `public_network_acccess_enabled`? (try terraform plan & apply)
+
+
+### Private endpoint
+
+
+
+### Role assignment
+
+```terraform
+resource "azurerm_role_assignment" "st_sbdr" {
+  scope                = ""
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = "" 
+}
+```
+
+  - Where do you find the `principal_id` of a user / group / service principal?
+  - How do we set the `scope` to the storage account that was created before?
 
 ## Update resources
 
