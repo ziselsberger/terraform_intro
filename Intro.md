@@ -51,7 +51,7 @@ resource "azurerm_storage_account" "st_datalake" {
 
 ```terraform
 resource "azurerm_private_endpoint" "pe_datalake" {
-  name                = "pe-stbtvdutfwsdev001-dev-001"
+  name                = "pe-xx-001"  # replace xx with name of storage account
   location            = "West Europe"
   resource_group_name = "rg-tf-workshop"
   subnet_id           = ""
@@ -65,7 +65,7 @@ resource "azurerm_private_endpoint" "pe_datalake" {
 }
 ```
 
-- To create a private endpoint, we need to define the `subnet_id`. We will use the existing subnet "xyz" in vnet "abc". How do we get its **id**?
+- To create a private endpoint, we need to specify the `subnet_id`. We will use the existing subnet "xyz" in vnet "abc". How do we get its **id**?
 - What is the `private_connection_resource_id` and how do we get it?
 - Which `subresource_names` do we need to define for our datalake?
 
@@ -76,12 +76,13 @@ resource "azurerm_private_endpoint" "pe_datalake" {
 
 ```terraform
 resource "azurerm_role_assignment" "st_sbdr" {
-  scope                = azurerm_storage_account.st_datalake.id
+  scope                = ""
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = "" 
 }
 ```
 
+- As scope we want to the define the storage account.
 - Where/How do you find the `principal_id` of a user / group / service principal?
 
 > Validate, commit & push your changes.  
@@ -90,19 +91,28 @@ resource "azurerm_role_assignment" "st_sbdr" {
 ### Use variables
 
 - Define a variable for **location** in variables.tf (type = string).
-- Create terraform.tfvars file and add `location = "West Europe"`.
+- Create a terraform.tfvars file and add `location = "West Europe"`.
 - Replace all occurrences of the hard coded "West Europe" with the new variable.
 
-> Validate, commit & push your changes. 
+> Validate, commit & push your changes.  
 > Run terraform plan (_there should not be any changes_).
 
 ### Conditionals & Loops
 
-- Create a local variable **datalake-private-endpoints** and assign the necessary subresource names (as list).
+#### Condition / Count
+
+
+
+#### For each
+
+- Create a local variable **datalake-private-endpoints** and assign the necessary subresource names:
 
   ```terraform
   locals {
-    datalake-private-endpoints = ...
+    datalake-private-endpoints = {
+      subresource_name = "001"
+      ...
+    }
   }
   ```
 
@@ -110,12 +120,14 @@ resource "azurerm_role_assignment" "st_sbdr" {
 
   ```terraform
   resource "azurerm_private_endpoint" "pe_datalake" {
-    for_each = toset(local.datalake-private-endpoints)
+    for_each = local.datalake-private-endpoints
+
+    name = "pe-xx-${each.value}"
 
     ...
 
     private_service_connection {
-      subresource_names = [each.value]
+      subresource_names = [each.key]
       ...
     }
   }
@@ -125,6 +137,9 @@ resource "azurerm_role_assignment" "st_sbdr" {
 
 > Validate, commit & push your changes.  
 > Run terraform plan -> What will be changed?  
+
+- Can we switch the datalake-private-endpoints definition from "id = name" to "name = id"? What would change?
+
 > Run terraform apply.
 
 ## Create & use modules
